@@ -26,19 +26,21 @@ jobs:
 
       - name: Extract project
         run: |
-          rm -rf android-project
           mkdir android-project
           unzip -q ShortsAutoKit_Android_Complete_Project.zip -d android-project
 
-      - name: Find project
+      - name: Generate Gradle wrapper
         run: |
-          find android-project -name settings.gradle.kts -o -name build.gradle.kts
+          PROJECT_DIR=$(find android-project -name settings.gradle.kts -type f | head -n 1 | xargs dirname)
+          cd "$PROJECT_DIR"
+          gradle wrapper --gradle-version 8.10
 
       - name: Build APK
         run: |
           PROJECT_DIR=$(find android-project -name settings.gradle.kts -type f | head -n 1 | xargs dirname)
           cd "$PROJECT_DIR"
-          gradle assembleDebug --stacktrace
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
