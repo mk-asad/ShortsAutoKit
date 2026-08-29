@@ -1,6 +1,9 @@
-name: Build Android APK
+name: Build ShortsAutoKit APK
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -11,7 +14,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -19,8 +22,7 @@ jobs:
 
       - name: Extract Android project
         run: |
-          mkdir android-project
-          unzip -q *.zip -d android-project
+          unzip -o ShortsAutoKit_Android_Complete_Project.zip -d android-project
 
       - name: Find Gradle project
         run: |
@@ -29,11 +31,11 @@ jobs:
             echo "gradlew not found"
             exit 1
           fi
-          echo "GRADLEW=$GRADLEW" >> $GITHUB_ENV
+          PROJECT_DIR=$(dirname "$GRADLEW")
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
 
       - name: Build APK
         run: |
-          PROJECT_DIR=$(dirname "$GRADLEW")
           cd "$PROJECT_DIR"
           chmod +x gradlew
           ./gradlew assembleDebug
@@ -42,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ShortsAutoKit-APK
-          path: android-project/**/build/outputs/apk/**/*.apk
+          path: '**/build/outputs/apk/**/*.apk'
