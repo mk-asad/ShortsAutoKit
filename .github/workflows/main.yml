@@ -2,8 +2,7 @@ name: Build ShortsAutoKit APK
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -11,34 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Extract Android project
+      - name: Extract project
         run: |
-          unzip -o ShortsAutoKit_Android_Complete_Project.zip -d android-project
+          mkdir android-project
+          unzip -q ShortsAutoKit_Android_Complete_Project.zip -d android-project
 
-      - name: Find Gradle project
+      - name: Locate Gradle project
         run: |
-          GRADLEW=$(find android-project -name gradlew -type f | head -n 1)
-          if [ -z "$GRADLEW" ]; then
-            echo "gradlew not found"
-            exit 1
-          fi
-          PROJECT_DIR=$(dirname "$GRADLEW")
-          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+          echo "Searching for Gradle project..."
+          find android-project -name gradlew -type f
 
       - name: Build APK
         run: |
+          GRADLEW=$(find android-project -name gradlew -type f | head -n 1)
+          if [ -z "$GRADLEW" ]; then
+            echo "ERROR: gradlew was not found inside ZIP"
+            exit 1
+          fi
+
+          PROJECT_DIR=$(dirname "$GRADLEW")
           cd "$PROJECT_DIR"
+
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
