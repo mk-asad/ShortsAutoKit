@@ -1,16 +1,28 @@
 workflows:
-  android-debug:
-    name: ShortsAutoKit Android Debug
+  android-build:
+    name: ShortsAutoKit Android Build
     instance_type: linux_x2
+
     environment:
       java: 17
+
     scripts:
-      - name: Generate Gradle wrapper
+      - name: Extract Android project
         script: |
+          rm -rf android-project
+          mkdir android-project
+          unzip -q ShortsAutoKit_Android_Complete_Project.zip -d android-project
+
+      - name: Install Gradle
+        script: |
+          cd android-project
           gradle wrapper --gradle-version 8.10
-      - name: Build debug APK
+
+      - name: Build APK
         script: |
+          cd android-project
           chmod +x gradlew
           ./gradlew assembleDebug
+
     artifacts:
-      - app/build/outputs/apk/**/*.apk
+      - android-project/app/build/outputs/apk/debug/*.apk
