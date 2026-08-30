@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.ShortsAutoKit" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:statusBarColor">#090713</item>
+        <item name="android:navigationBarColor">#090713</item>
+    </style>
+</resources>

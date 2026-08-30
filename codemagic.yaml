@@ -1,0 +1,16 @@
+workflows:
+  android-debug:
+    name: ShortsAutoKit Android Debug
+    instance_type: linux_x2
+    environment:
+      java: 17
+    scripts:
+      - name: Generate Gradle wrapper
+        script: |
+          gradle wrapper --gradle-version 8.10
+      - name: Build debug APK
+        script: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+    artifacts:
+      - app/build/outputs/apk/**/*.apk

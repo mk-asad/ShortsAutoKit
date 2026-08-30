@@ -1,0 +1,2 @@
+These are the root configuration/source files for the redesigned upload package.
+Note: Android Gradle builds still require the standard app/src directory layout. This package is a flat staging package, not a guaranteed buildable APK by itself.
